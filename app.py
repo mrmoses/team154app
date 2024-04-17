@@ -13,7 +13,6 @@ df = pd.read_csv('https://objects-us-east-1.dream.io/cdn-dreamhost-e/msd_track_m
 decades_dfs = app_util.get_decades_data(df)
 
 # load gamma model(s)
-x_attributes = ['tempo','loudness','song_key','song_mode','time_signature']
 all_models = pickle.load(open('./models/gamma_all-decades_v1.pkl','rb'))
 
 # select model trained from the "recent" tracks
@@ -22,9 +21,10 @@ model = all_models[-1]
 # get top tracks from "recent" tracks
 recent_top_tracks = app_util.get_top_tracks(model, decades_dfs['recent']['data'], 100)
 
-# select a decade
-decade_selection = [dkey for dkey in decades_dfs]
-selected_decade = st.selectbox('Select a decade', decade_selection[:-1])
+# display decade selector
+decade_selection = [dkey for dkey in decades_dfs][:-1]
+decade_selection.sort(reverse=True)
+selected_decade = st.selectbox('Select a decade', decade_selection)
 
 # get top songs from the selected decade (according to the selected model)
 decade_top_tracks = app_util.get_top_tracks(model, decades_dfs[selected_decade]['data'], 100)
@@ -38,7 +38,7 @@ selected_song = st.selectbox('Select a top "recent" song', song_selections)
 pca_data = pd.concat([recent_top_tracks, decade_top_tracks])
 
 # get the PCAs (adds the 2 columns to the the pca dataframe)
-pca = PCA(n_components=2).fit_transform(pca_data[x_attributes])
+pca = PCA(n_components=2).fit_transform(pca_data[app_util.x_attributes])
 pca_data['pca1'] = pca[:,0]
 pca_data['pca2'] = pca[:,1]
 pca_data.head(3)
