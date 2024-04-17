@@ -54,5 +54,6 @@ if (selected_song != ''):
 st.plotly_chart(fig)
 
 # list top predicted songs from the selected decade
+st.write('Top predicted songs from the selected decade:')
 st.dataframe(decade_top_tracks[['year','title','artist_name','release']].style.format(thousands=""), hide_index=True)
 
