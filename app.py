@@ -7,7 +7,7 @@ import app_util as app_util
 import pickle
 
 # load data
-df = pd.read_csv('./data/small_sample_data.csv')
+df = pd.read_csv('https://objects-us-east-1.dream.io/cdn-dreamhost-e/msd_track_metadata_1M_fromEC2_v2_cleaned.csv')
 
 # split data into decades
 decades_dfs = app_util.get_decades_data(df)
