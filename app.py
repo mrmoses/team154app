@@ -38,7 +38,7 @@ decade_selection.sort(reverse=True)
 selected_decade = col1.selectbox('Select a decade', decade_selection)
 
 # display top track count selector
-number_of_top_tracks = col2.selectbox('Number of top tracks', [10, 100, 500, 1000, 5000, 10000, 50000, 100000], 1)
+number_of_top_tracks = col2.selectbox('Number of top tracks', [10, 100, 500, 1000, 5000, 10000, 50000, 100000], 4)
 
 # get top tracks
 recent_top_tracks = app_util.get_top_tracks(model, decades_dfs['recent']['data'], number_of_top_tracks)
