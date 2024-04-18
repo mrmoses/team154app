@@ -29,24 +29,25 @@ all_models = pickle.load(open('./models/gamma_all-decades_v1.pkl','rb'))
 # select model trained from the "recent" tracks
 model = all_models[-1]
 
-# get top tracks from "recent" tracks
-recent_top_tracks = app_util.get_top_tracks(model, decades_dfs['recent']['data'], 100)
-
 # 2 cols for the inputs
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 # display decade selector
 decade_selection = [dkey for dkey in decades_dfs][:-1]
 decade_selection.sort(reverse=True)
 selected_decade = col1.selectbox('Select a decade', decade_selection)
 
-# get top songs from the selected decade (according to the selected model)
-decade_top_tracks = app_util.get_top_tracks(model, decades_dfs[selected_decade]['data'], 100)
+# display top track count selector
+number_of_top_tracks = col2.selectbox('Number of top tracks', [10, 100, 500, 1000, 5000, 10000, 50000, 100000], 1)
+
+# get top tracks
+recent_top_tracks = app_util.get_top_tracks(model, decades_dfs['recent']['data'], number_of_top_tracks)
+decade_top_tracks = app_util.get_top_tracks(model, decades_dfs[selected_decade]['data'], number_of_top_tracks)
 
 # display song selector
 song_selections = recent_top_tracks['title'] + ' - ' + recent_top_tracks['artist_name']
 song_selections = [''] + song_selections.to_numpy().tolist()
-selected_song = col2.selectbox('Select a top "recent" song', song_selections)
+selected_song = col3.selectbox('Select a top "recent" song', song_selections)
 
 # combine recent data (data used to create model), with selected decade data
 pca_data = pd.concat([recent_top_tracks, decade_top_tracks])
