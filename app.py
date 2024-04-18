@@ -52,7 +52,7 @@ pca_data.head(3)
 fig = px.scatter(pca_data, x='pca1', y='pca2', color='decade'
                  , hover_data=['title','artist_name','year']
                  , color_discrete_map=app_util.color_map
-                 , height=700)
+                 , height=600)
 
 # highlight selected song
 if (selected_song != ''):
