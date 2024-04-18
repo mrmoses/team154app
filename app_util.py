@@ -2,6 +2,17 @@ import numpy as np
 
 x_attributes = ['tempo','loudness','song_key','song_mode','time_signature']
 
+color_map = {
+    'recent':'#003057',
+    1940:'#B3A369',
+    1950:'#B3A369',
+    1960:'#B3A369',
+    1970:'#B3A369',
+    1980:'#B3A369',
+    1990:'#B3A369',
+    2000:'#B3A369'
+}
+
 def get_year_selections(df):
     years = df['year'].unique()
     years.sort()
