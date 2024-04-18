@@ -8,6 +8,15 @@ import streamlit as st
 
 st.set_page_config(page_title='Team 154: Songs that Resonate Across the Decades', layout="wide", menu_items=None)
 
+st.title('Songs that Resonate Across the Decades')
+st.markdown('''
+    Songs from the [Million Song Dataset](http://millionsongdataset.com/) are used here to discover "hits" that were ahead of their time.
+    The most recent songs from the dataset were used in a Gamma GLM regression to determine what makes a song popular "today".
+    Below, you can select a decade to discover songs in that decade that are popular according to the popularity trends of recent songs.
+    You can also select a song from the "recent" list to have it highlighted in the graph and be able to identify older or newer songs that are close or similar to the selected song.
+    ''')
+
+
 # load data
 df = pd.read_csv('https://objects-us-east-1.dream.io/cdn-dreamhost-e/msd_track_metadata_1M_fromEC2_v2_cleaned.csv')
 
@@ -64,4 +73,3 @@ st.plotly_chart(fig, use_container_width=True)
 # list top predicted songs from the selected decade
 st.write('Top predicted songs from the selected decade:')
 st.dataframe(decade_top_tracks[['year','title','artist_name','release']].style.format(thousands=""), hide_index=True, use_container_width=True)
-
