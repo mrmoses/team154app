@@ -88,7 +88,7 @@ if (selected_song != ''):
             y=[y1, y2],
             mode='lines',
             line=dict(color='red')  # Customize line properties
-            , hoverinfo='skip'
+            , hoverinfo='skip', showlegend=False
         )
         fig.add_trace(line)
 
