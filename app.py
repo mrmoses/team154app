@@ -1,9 +1,10 @@
-import pandas as pd
 import numpy as np
-from sklearn.decomposition import PCA
+import pandas as pd
 import plotly.express as px
-import app_util as app_util
+import plotly.graph_objects as go
+from sklearn.decomposition import PCA
 import pickle
+import app_util as app_util
 import streamlit as st
 
 st.set_page_config(page_title='Team 154: Songs that Resonate Across the Decades', layout="wide", menu_items=None)
@@ -64,13 +65,40 @@ fig = px.scatter(pca_data, x='pca1', y='pca2', color='decade'
                  , color_discrete_map=app_util.color_map
                  , height=600)
 
-# highlight selected song
 if (selected_song != ''):
-    song_index = song_selections.index(selected_song)
-    fig.add_traces(px.scatter(pca_data.iloc[song_index-1:song_index], x="pca1", y="pca2").update_traces(marker_size=25, marker_color="#FFCD00", opacity=0.75).data)
+    selected_song_index = song_selections.index(selected_song)
+    selected_song_data = pca_data.iloc[selected_song_index-1:selected_song_index]
+
+    # highlight selected song
+    fig.add_traces(px.scatter(selected_song_data, x="pca1", y="pca2").update_traces(marker_size=25, marker_color="#FFCD00", opacity=0.75).data)
+
+    # get 5 closest tracks
+    closest_tracks = app_util.get_closest_tracks(pca_data[pca_data['decade'] == selected_decade].copy(), selected_song_data, k=5)
+
+    # add lines to closest tracks
+    for index, row in closest_tracks.iterrows():
+        # Extract x and y coordinates of selected and closest points
+        #x1, y1 = pca_data.iloc[selected_song_index][['pca1', 'pca2']]
+        x1, y1 = pca_data.iloc[selected_song_index-1][['pca1', 'pca2']]
+        x2, y2 = row[['pca1', 'pca2']]
+
+        # Create line trace with desired color and opacity
+        line = go.Scatter(
+            x=[x1, x2],
+            y=[y1, y2],
+            mode='lines',
+            line=dict(color='red')  # Customize line properties
+            , hoverinfo='skip'
+        )
+        fig.add_trace(line)
 
 st.plotly_chart(fig, use_container_width=True)
 
-# list top predicted songs from the selected decade
-st.write('Top predicted songs from the selected decade:')
-st.dataframe(decade_top_tracks[['year','title','artist_name','release']].style.format(thousands=""), hide_index=True, use_container_width=True)
+# list top predicted songs
+if (selected_song != ''):
+    st.write(f'Top predicted songs from the selected decade ({selected_decade}) that are similar to the selected track ({selected_song}):')
+    top_tracks = closest_tracks.sort_values('pred', ascending=False)
+    st.dataframe(top_tracks[['year','title','artist_name','release']].style.format(thousands=""), hide_index=True, use_container_width=True)
+else:
+    st.write(f'Top predicted songs from the selected decade ({selected_decade}):')
+    st.dataframe(decade_top_tracks[['year','title','artist_name','release']].style.format(thousands=""), hide_index=True, use_container_width=True)

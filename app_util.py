@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from scipy.spatial.distance import cdist
 
 x_attributes = ['tempo','loudness','song_key','song_mode','time_signature']
 
@@ -45,3 +47,19 @@ def get_top_tracks(model, data, n = 10):
     result.loc[:,'pred'] = model.predict(data[x_attributes])
     top_indices = np.argsort(result['pred'], axis=0)[-n:][::-1]
     return result.iloc[top_indices]
+
+def get_closest_tracks(decade_data, selected_song_data, k=5):
+    # get coordinates of this decades tracks
+    all_points = decade_data[['pca1', 'pca2']].to_numpy()
+
+    # calculate distances between selected track and this decades tracks
+    selected_point = selected_song_data[['pca1', 'pca2']].to_numpy()[0]
+    distances = cdist([selected_point], all_points)[0]
+
+    # sort together by distance (ascending order)
+    sorted_data = pd.DataFrame({'index': decade_data.index, 'distance': distances})
+    sorted_data = sorted_data.sort_values(by='distance')
+
+    # get and return the top k closest tracks
+    closest_points = decade_data.loc[sorted_data['index'][:k].tolist()]
+    return closest_points
